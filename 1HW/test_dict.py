@@ -25,8 +25,11 @@ def test_1():
 
 
 def test_2():
-    with pytest.raises(AssertionError):
-         assert 'Pilzner' in bear and bear['Pilzner'] == 'Czech'
+    if 'Pilzner' in bear:
+        with pytest.raises(AssertionError):
+            assert bear['Pilzner'] == 'Czech'
+    else:
+        print('uuffff')
 
 
 def test_3():
