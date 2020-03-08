@@ -25,10 +25,8 @@ def test_1():
 
 
 def test_2():
-    for k in bear:
-        if bear[k] == 'Czech':
-            with pytest.raises(AssertionError):
-                assert k == 'Pilzner'
+    with pytest.raises(AssertionError):
+         assert 'Pilzner' in bear and bear['Pilzner'] == 'Czech'
 
 
 def test_3():
