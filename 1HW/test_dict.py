@@ -19,9 +19,9 @@ favorite = {
 def test_1():
     for k in favorite:
         try:
-            assert favorite[k] == bear[k]
-        except KeyError:
-            print('Oppa u have unique sort of bear', favorite[k])
+            assert k in bear and favorite[k] == bear[k]
+        except AssertionError:
+            print('Oppa u have unique sort of bear', k)
 
 
 def test_2():
@@ -33,8 +33,8 @@ def test_2():
 
 def test_3():
     try:
-        assert 'Garage' in favorite == True
-    except Exception:
+        assert 'Garage' in favorite
+    except AssertionError:
         print('whyyyy?')
 
 
