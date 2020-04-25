@@ -1,7 +1,4 @@
-import time
-
 import pytest
-from selenium.common.exceptions import TimeoutException, ElementNotInteractableException
 
 from tests.base import BaseCase
 
@@ -20,20 +17,17 @@ class Test(BaseCase):
     @pytest.mark.UI
     def test_create_company(self, auth):
         self.company_page.creating("Mycompany123", "https://www.google.com/", "jr.jpeg")
-        time.sleep(3)
-        assert "Mycompany123" in self.driver.page_source
+        self.company_page.searching("Mycompany123")
+        assert self.audit_page.find(self.company_page.locators.MY_COMP).text == "Mycompany123"
 
     @pytest.mark.UI
     def test_create_audit(self, auth):
         self.audit_page.create_audit("Myaudit123")
         self.audit_page.search_audit("Myaudit123")
-        time.sleep(5)
-        assert "Myaudit123" in self.driver.page_source
+        assert self.audit_page.find(self.audit_page.locators.MY_AUDIT).text == "Myaudit123"
 
     @pytest.mark.UI
     def test_delete_audit(self, auth):
         self.audit_page.create_audit("Myaudit1234")
         self.audit_page.delete_audit("Myaudit1234")
-        self.audit_page.search_audit("Myaudit1234")
-        time.sleep(5)
-        assert "Myaudit1234" not in self.driver.page_source
+        assert self.audit_page.find(self.audit_page.locators.MY_AUDIT).text != "Myaudit1234"

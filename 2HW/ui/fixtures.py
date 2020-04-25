@@ -40,6 +40,7 @@ def driver(config):
     version = config['version']
     url = config['url']
     selenoid = config['selenoid']
+    ver_for_selenoid = config['ver_for_selenoid']
 
     if browser == 'chrome':
         options = ChromeOptions()
@@ -49,7 +50,7 @@ def driver(config):
 
             capabilities = {'acceptInsecureCerts': True,
                             'browserName': 'chrome',
-                            'version': version,
+                            'version': ver_for_selenoid,
                             }
 
             driver = webdriver.Remote(command_executor=f'http://{selenoid}/wd/hub/',
@@ -70,20 +71,3 @@ def driver(config):
     driver.maximize_window()
     yield driver
     driver.close()
-
-# @pytest.fixture(scope='function', params=['chrome'])
-# def all_drivers(config, request):
-#     browser = request.param
-#     url = config['url']
-#
-#     if browser == 'chrome':
-#         manager = ChromeDriverManager(version='latest')
-#         driver = webdriver.Chrome(executable_path=manager.install())
-#
-#     else:
-#         raise UsupportedBrowserException(f'Unsupported browser: "{browser}"')
-#
-#     driver.maximize_window()
-#     driver.get(url)
-#     yield driver
-#     driver.close()

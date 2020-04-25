@@ -1,13 +1,11 @@
 import os
-import time
 
 from selenium.common.exceptions import StaleElementReferenceException
-from selenium.webdriver.common.keys import Keys
+
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-# from ui.locators.locators import BaseLocators
 from ui.locators.locators import BaseLocators
 
 RETRY_COUNT = 3
@@ -44,7 +42,7 @@ class BasePage:
 
     def wait(self, timeout=None):
         if timeout is None:
-            timeout = 10
+            timeout = 5
         return WebDriverWait(self.driver, timeout=timeout)
 
     def count_elements(self, locator, count, timeout=1):
@@ -56,13 +54,13 @@ class BasePage:
         input_element.send_keys(smth)
 
     def input_object(self, name, locator):
+        current_file_dir = os.path.dirname(__file__)
+        abs_file_path = os.path.abspath(os.path.join(current_file_dir, os.path.pardir, os.path.pardir, name))
         input_element = self.find(locator)
-        input_element.send_keys(f'{os.getcwd()}/{name}')
+        input_element.send_keys(abs_file_path)
 
-    def search(self, name, locator):
+    def search(self, name, locator, suggestion):
         input_element = self.find(locator)
         input_element.clear()
         input_element.send_keys(name)
-        time.sleep(3)
-        input_element.send_keys(Keys.ENTER)
-        # self.find(self.locators.SUGGESTION).click()
+        self.find(suggestion).click()
