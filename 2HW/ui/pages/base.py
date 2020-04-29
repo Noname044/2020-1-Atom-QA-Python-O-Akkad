@@ -59,8 +59,16 @@ class BasePage:
         input_element = self.find(locator)
         input_element.send_keys(abs_file_path)
 
-    def search(self, name, locator, suggestion):
+        def search(self, name, locator, suggestion):
         input_element = self.find(locator)
-        input_element.clear()
+        started = time.time()
+        timeout = 0.1
+        interval = 1
+        while time.time() - started < timeout:
+            try:
+                input_element.clear()
+                break
+            except InvalidElementStateException:
+                time.sleep(interval)
         input_element.send_keys(name)
         self.find(suggestion).click()
