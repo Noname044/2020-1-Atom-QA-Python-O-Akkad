@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#whick dir
+function which_dir {
+ echo -n "Input directory: "
+ read file
+}
+
+while [ -z $1 ] && [ -z "$file" ]; do
+	which_dir
+done
+
+file="$1"
+
+#check file
+if [ -f "$file" ];then 
+ echo "File in this directory! Initialize checkking log ..." 
+else 
+ echo "There is no such file in this directory! Bye!"
+ exit 99 
+fi
+
+#total number of requests
+echo "__________total number of requests__________" > ./statistick.txt
+wc -l "$file" | cut -d ' ' -f1 >> statistick.txt
+#number of requests by type
+echo "__________number of requests by type__________" >> ./statistick.txt
+sort -t ' ' -k6 "$file" | cut -d ' ' -f6 | uniq -c >> ./statistick.txt
+#top 10 largest requests by size 
+echo "__________top 10 largest requests by size__________" >> ./statistick.txt
+cut -d ' ' -f1,6,7,10 "$file" | sort -k4 -n -r | uniq -c | head  >> ./statistick.txt
+#top 10 client error
+echo "__________top 10 client error__________" >> ./statistick.txt
+cut -d ' ' -f1,7,9 "$file" | grep ' 4[[:digit:]][[:digit:]]' | sort -n -k1 -t ' ' | uniq -c -d | sort -n -r -k1 -t ' ' | head >> ./statistick.txt
+#top 10 redirect
+echo "__________top 10 client error by size__________" >> ./statistick.txt
+cut -d ' ' -f1,7,9,10 "$file" | grep ' 4[[:digit:]][[:digit:]] '| sort -k4 -r -t ' ' | uniq -c -d | head >> ./statistick.txt
+
+echo "Ready! You can find statistic in the file 'statistick.txt' in the same directory"
