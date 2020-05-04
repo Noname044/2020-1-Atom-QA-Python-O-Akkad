@@ -14,7 +14,7 @@ class Test(BaseCase):
         self.enter_page.authorization("78Cheburekoff3@ya.ru", "7889775114232Pol")
         assert "Error" in self.driver.page_source
 
-    @pytest.mark.UI_t
+    @pytest.mark.UI
     def test_create_company(self, auth):
         self.company_page.creating("Mycompany123", "https://www.google.com/", "jr.jpeg")
         self.company_page.searching("Mycompany123")
