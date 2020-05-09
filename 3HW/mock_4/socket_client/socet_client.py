@@ -13,16 +13,8 @@ class SocketClient:
         sleep(1)
         self.client.connect((self.target_host, self.target_port))
 
-    # def initialization(self):
-    #     sock = socket.socket()
-    #     conn, addr = self.client.accept()
-    #     if conn is None:
-    #         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #         sleep(1)
-    #         self.client.connect((self.target_host, self.target_port))
-
+        
     def get_request(self, id_u):
-        # self.initialization()
         self.__init__(self.target_host, self.target_port)
         params = f"/user/{id_u}"
         get_request = f'GET {params} HTTP/1.1\r\nHost:{self.target_host}\r\n\r\n'
@@ -39,7 +31,6 @@ class SocketClient:
         return data
 
     def post_request(self, user, id_u):
-        # self.initialization()
         self.__init__(self.target_host, self.target_port)
         params = f"/user"
         data = f'id={str(id_u)}&name={user[str(id_u)]["name"]}&surname={user[str(id_u)]["surname"]}'
