@@ -1,0 +1,71 @@
+version: '2.1'
+
+networks:
+  selyan:
+    external: true
+    name: selyan
+
+services:
+  app_db:
+    container_name: "app_db"
+    environment:
+      MYSQL_ROOT_PASSWORD: "pass_root"
+    image: "mysql:latest"
+    volumes:
+      - "/home/mindstone/PycharmProjects/Test_my_app/Composing/app_db_config/script.sql:/docker-entrypoint-initdb.d/script.sql"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-uroot", "-ppass_root", "ping", "-h", "127.0.0.1"]
+      timeout: 20s
+      retries: 10
+    ports:
+      - "3306:3306"
+    restart: always
+    networks:
+      - selyan
+
+  vk_mock:
+    container_name: "vk_mock"
+    build: ./mock_config
+    ports:
+      - "5000:5000"
+    restart: always
+    depends_on:
+      app_db:
+        condition: service_healthy
+    networks:
+      - selyan
+
+  our_app:
+    container_name: "our_app"
+    image: "myapp:latest"
+    volumes:
+      - /home/mindstone/PycharmProjects/Test_my_app/Composing/config_file.conf:/config_file.conf
+    depends_on:
+      app_db:
+        condition: service_healthy
+    ports:
+      - "2222:2222"
+    links:
+      - "app_db:app_db"
+      - "vk_mock:vk_mock"
+    command: "/app/myapp --config=/config_file.conf"
+    restart: always
+    networks:
+      - selyan
+
+  selenoid:
+    restart: always
+    image: "aerokube/selenoid"
+    container_name: "selenoid"
+    networks:
+      - selyan
+    volumes:
+      - "/home/mindstone/docker_files/selenoid:/etc/selenoid"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/home/mindstone/docker_files/selenoid/video:/opt/selenoid/video"
+      - "/home/mindstone/docker_files/selenoid/logs:/opt/selenoid/logs"
+    environment:
+      - OVERRIDE_VIDEO_OUTPUT_DIR=/path/to/config/video
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs", "-container-network", "selyan"]
+    ports:
+      - "4444:4444"
